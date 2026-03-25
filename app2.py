@@ -1,5 +1,4 @@
-import os
-os.environ["TF_USE_LEGACY_KERAS"]="1"
+
 import streamlit as st
 import tensorflow as tf
 import numpy as np
@@ -8,7 +7,7 @@ from PIL import Image
 
 
 # load trained model
-model = tf.keras.models.load_model("brain_tumor_4class_model.keras")
+model = tf.keras.models.load_model("brain_tumor_4class_model.h5")
 
 
 # class labels (same order as training folders)
