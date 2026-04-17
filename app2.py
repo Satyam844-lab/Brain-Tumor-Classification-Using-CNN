@@ -4,73 +4,94 @@ import tensorflow as tf
 import numpy as np
 import cv2
 from PIL import Image
+import matplotlib.pyplot as plt
 
 
-# load trained model
-model = tf.keras.models.load_model("brain_tumor_4class_model.h5")
+# page config
+st.set_page_config(
+    page_title="Brain Tumor Classifier",
+    page_icon="🧠",
+    layout="wide"
+)
 
 
-# class labels (same order as training folders)
+# load model
+model = tf.keras.models.load_model("brain_tumor_4class_model.keras")
+
+
 class_names = [
-    "glioma tumor",
-    "meningioma tumor",
-    "no tumor",
-    "pituitary tumor"
+    "Glioma Tumor",
+    "Meningioma Tumor",
+    "No Tumor",
+    "Pituitary Tumor"
 ]
 
 
 # title
-st.title("Brain Tumor Classification (4 classes)")
-st.write("Upload an MRI image to detect tumor type")
+st.title("🧠 Brain Tumor MRI Classifier")
+st.write("Upload an MRI scan to classify tumor type using Deep Learning.")
 
 
-# upload image
-uploaded_file = st.file_uploader("Choose MRI Image", type=["jpg","png","jpeg"])
+uploaded_file = st.file_uploader("Upload MRI Image", type=["jpg","png","jpeg"])
 
 
-if uploaded_file is not None:
+if uploaded_file:
 
-    # display image
+    col1, col2 = st.columns(2)
+
+
     image = Image.open(uploaded_file)
 
-    st.image(image, caption="Uploaded MRI", use_column_width=True)
-
-
-    # convert to array
     img = np.array(image)
 
 
-    # convert grayscale → RGB
     if len(img.shape) == 2:
         img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
 
 
-    # resize
     img = cv2.resize(img, (128,128))
 
-
-    # normalize
     img = img / 255.0
 
-
-    # reshape
     img = img.reshape(1,128,128,3)
 
 
-    # prediction
-    prediction = model.predict(img)
+    with st.spinner("Analyzing MRI..."):
+
+        prediction = model.predict(img)
 
 
-    # get class index
     class_index = np.argmax(prediction)
-
 
     confidence = prediction[0][class_index]
 
 
-    # result
-    st.subheader("Prediction")
+    # left side image
+    with col1:
+        st.image(image, caption="Uploaded MRI", use_column_width=True)
 
-    st.success(class_names[class_index])
 
-    st.write("Confidence:", float(confidence))
+    # right side result
+    with col2:
+
+        st.subheader("Prediction")
+
+        st.success(class_names[class_index])
+
+        st.metric(
+            label="Confidence",
+            value=f"{confidence*100:.2f}%"
+        )
+
+
+        st.subheader("Class Probabilities")
+
+        fig = plt.figure()
+
+        plt.bar(class_names, prediction[0])
+
+        plt.xticks(rotation=30)
+
+        plt.ylabel("Probability")
+
+        st.pyplot(fig)
