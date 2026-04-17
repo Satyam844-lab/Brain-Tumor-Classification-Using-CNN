@@ -16,7 +16,7 @@ st.set_page_config(
 
 
 # load model
-model = tf.keras.models.load_model("brain_tumor_4class_model.keras")
+model = tf.keras.models.load_model("brain_tumor_4class_model.h5")
 
 
 class_names = [
