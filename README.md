@@ -28,7 +28,8 @@ The model is built using a **Convolutional Neural Network (CNN)** and deployed a
 * Classes: 4 tumor categories
 * Optimizer: Adam
 * Loss Function: Sparse Categorical Crossentropy
-* Achieved Accuracy: ~90% on test dataset
+* Achieved Accuracy: ~70% on test dataset
+  <img width="2657" height="731" alt="results" src="https://github.com/user-attachments/assets/e2eb9e46-f8b5-45eb-8cc2-1fe638539a45" />
 
 ---
 
